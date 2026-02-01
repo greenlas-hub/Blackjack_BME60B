@@ -79,7 +79,41 @@ function [player, handValue] = evaluateHand(player, dealerHand)
 end
 
 function updatedDealer =  dealerLogic(dealerHand)
+disp(dealerHand); % reveal dealer's face down card
+dealerHandVal = sum(dealerHand) % evaluate value of dealers Hand
 
-% need logic here to determine if the dealer should hit or stand 
-% while loop, dealer hand < 17 dealer needs to hit ;)
+% dealer has a choice to hit or stand if their hand is not yet valued at 21 
+% idk what to do if the value = 21
+while dealerHandVal < 21  
+
+if dealerHandVal < 17 % if the dealer's hand is valued less than 17
+    disp ("Hit") % the dealer chooses to hit
+                    %^this doesn't have to happen idk if we want it
+    updatedDealer = dealCard (x,y) % deal a new card to dealer and output new hand
+                                    % have to use the deal function from somewhere else
+
+else %if the dealer's hand is more than 17 but less than 21
+    disp("Stand") % the dealer chooses to stand
+                    %^doesnt need to happen
+    updatedDealer = dealerHand % output the same hand
+end
+
+dealerHandVal = sum(updatedDealer) % evaluate the value of the dealer's hand again
+end
+
+if dealerHand > 21 & ~(ismember(11, dealerHand)) % dealerHand is greater than 21 and doesn't contain Ace
+    disp("Bust") % display bust
+                    %^doesnt need to happen
+end
+
+if dealerHandVal > 21 & (ismember(11, dealerHand)) % if the dealer's hand is valued higher than 21 and it contains an A, A's value changes to 1
+updatedDealer = changeAto1 (dealerHand) % use function "changeAto1"
+end
+
 end  
+
+function updatedPlayerHand = changeAto1 (playerHand) %function to change value of A from 11 to 1
+index = find (playerHand == 11); % find the position of the card valued at 11 (A)
+playerHand (index) = 1; % change the value of the that position to 1
+updatedPlayerHand = playerHand; % output the new player hand
+end
