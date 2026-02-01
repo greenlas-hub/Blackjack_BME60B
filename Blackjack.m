@@ -80,7 +80,7 @@ end
 
 function updatedDealer =  dealerLogic(dealerHand)
 disp(dealerHand); % reveal dealer's face down card
-dealerHandVal = sum(dealerHand) % evaluate value of dealers Hand
+dealerHandVal = sum(dealerHand(:,1)) % evaluate value of dealers Hand
 
 % dealer has a choice to hit or stand if their hand is not yet valued at 21 
 % idk what to do if the value = 21
@@ -98,7 +98,7 @@ else %if the dealer's hand is more than 17 but less than 21
     updatedDealer = dealerHand % output the same hand
 end
 
-dealerHandVal = sum(updatedDealer) % evaluate the value of the dealer's hand again
+dealerHandVal = sum(updatedDealer(:,1)) % evaluate the value of the dealer's hand again
 end
 
 if dealerHand > 21 & ~(ismember(11, dealerHand)) % dealerHand is greater than 21 and doesn't contain Ace
