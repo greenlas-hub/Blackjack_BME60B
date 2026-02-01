@@ -1,11 +1,36 @@
 %% Ready, Set, Start! 
 %shuffle deck of 52 cards by randomly arranging their orders at the start
+
+% initialize deck 
+myVals = [2:10, 10, 10, 10, 11]; 
+myVals = repmat(myVals, [1,4]);
+
+mySuits=[repmat("Hearts", [1,13]),repmat("Diamonds", [1,13]),repmat("Clubs", [1,13]),repmat("Spades", [1,13])]
+
+myDeck=table(); 
+myDeck.vals=myVals';
+myDeck.suits=mySuits';
+myDeck.cardName=myDeck.vals+ " of "+myDeck.suits
+
+for i = 1:nPlayers 
+    myPlayers.name{i}=input("Player "+ i + " name: ", "s");
+end 
+
+myPlayers.money = repmat(1000, [nPlayers, 1])
+
 % use randperm function to shuffle, once shuffled cards must be drawn in
 % the shuffled order 
-
+playingDeck=myDeck(randperm(height(myDeck)), :);
+myPlayers.handVal = cell(nPlayers, 1);
 %{
 function #2: deal the cards 
 draws cards in the order after shuffle and deal 2 cards to each player 
+for i=1:nPlayers
+    hand = playingDeck(1:2, :); 
+    playingDeck(1:2, :) = []; 
+    myPlayers.handVal{i} = hand.vals';
+end 
+
 %}
 
 % Blackjack Pseudocode 
