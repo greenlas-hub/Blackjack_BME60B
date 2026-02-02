@@ -23,7 +23,7 @@ end
 
 myPlayers.money = repmat(1000, [nPlayers, 1]);
 myPlayers.hand    = cell(nPlayers, 1);            % each will hold a table of cards
-myPlayers.handVal = zeros(nPlayers, 1);           % numeric hand value per player
+myPlayers.vals = zeros(nPlayers, 1);           % numeric hand value per player
 myPlayers.inRound = true(nPlayers, 1);            % still playing this round (not busted)
 
 
@@ -62,19 +62,43 @@ while playAgain == "y"
     % Deal in order: P1..Pn, Dealer(up), P1..Pn, Dealer(hole)
     [myPlayers, dealerHand, playingDeck] = initialDealInOrder(myPlayers, nPlayers, playingDeck);
 
+
     % Show only dealer up card
     disp("Dealer shows: " + dealerHand.cardName(1))
-
-    % Show each player's hand
-    for p = 1:nPlayers
-        disp(string(myPlayers.name{p}) + " has: " + strjoin(myPlayers.hand{p}.cardName, ", "))
-        disp("Value = " + myPlayers.handVal(p))
+    
+    for q = 1:nPlayers
+        while true
+            myPlayers.vals(q) = evaluateHand(myPlayers.hand{q});
+            disp(myPlayers.name{q} + " hand value: " + myPlayers.vals(q));
+            if myPlayers.vals(q) > 21
+                disp("Bust! " + myPlayers.vals(q) + " loses");
+                break
+            else
+                playerDecision = input(myPlayers.name{q} + ", Hit or Stand?", "s");
+                    if strcmpi(playerDecision, "stand") == true
+                        break
+                    elseif strcmpi(playerDecision, "hit") == true
+                        [newCard, playingDeck] = dealOneCard(playingDeck);
+                        myPlayers.hand{q} = [myPlayers.hand{q}; newCard];
+                    end
+            end
+        end
     end
+
 
     playAgain = lower(string(input("Play again? (y/n): ", "s")));
 end
 
 %% my local functions
+
+function showHand()
+% Show each player's hand
+    for p = 1:nPlayers
+        disp(string(myPlayers.name{p}) + " has: " + strjoin(myPlayers.hand{p}.cardName, ", "))
+        disp("Value = " + myPlayers.handVal(p))
+    end
+end
+
 function shuffledDeck = shuffleDeck(myDeck)
     shuffledDeck = myDeck(randperm(height(myDeck)), :);
 end
@@ -85,6 +109,7 @@ function myDeck = innitDeck()
 %Align card values, suits 
 end 
 
+%{
 function [updatedPlayer, updatedDeck]=dealCards(shuffledDeck, player)
 %think about player variable 
 % update player hand, calculate player hand value 
@@ -92,6 +117,7 @@ function [updatedPlayer, updatedDeck]=dealCards(shuffledDeck, player)
 % use the evaluate Hand function here 
 % update shuffledDeck to remove cards dealt shuffledDeck(1) =[]; 
 end 
+%}
 
 function handValue = evaluateHand(hand)
     vals = hand.vals;
@@ -125,6 +151,7 @@ function [card, playingDeck] = dealOneCard(playingDeck)
     card = playingDeck(1,:);     % 1-row table
     playingDeck(1,:) = [];       % remove from deck
 end
+
 function [myPlayers, dealerHand, playingDeck] = initialDealInOrder(myPlayers, nPlayers, playingDeck)
     % Initialize empty hands as empty tables with the same variables as playingDeck
     emptyHand = playingDeck([],:);
